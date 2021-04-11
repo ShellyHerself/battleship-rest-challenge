@@ -30,6 +30,7 @@ class DbBattleShipGame(BaseModel):
     def toObject(self):
         '''Converts a game database object to an active BattleShipGame'''
         game = game_logic.BattleShipGame()
+        game.id = self.id
 
         # Convert boards from their json repr
         for json_board in self.player_boards:

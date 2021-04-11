@@ -52,10 +52,12 @@ class BattleShipPlayerBoard:
         return len(ship_squares)
 
 class BattleShipGame:
+    id = None
     player_boards = []
     # Allows for clients to check what their opponent's last move was
     player_last_turns = [None, None]
     turn_player = None
+    # TODO, All these statuses should be defined as some sort of an enum
     game_status = "PRE_GAME"
 
     @staticmethod
