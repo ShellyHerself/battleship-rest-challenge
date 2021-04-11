@@ -88,7 +88,8 @@ class BattleShipGame:
         if (self.player_boards[opponent_id].getTotalHealth() < 1):
             self.game_status = "OVER"
 
-        player_last_turns[player_id] = {'x':x, 'y':y}
+        self.player_last_turns[player_id] = {'x':x, 'y':y}
+        self.turn_player = self.getNextPlayerId(player_id)
 
         return hit_count
 
