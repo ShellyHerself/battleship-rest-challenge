@@ -19,10 +19,10 @@ class BattleShipPlayerBoard:
         new_squares = []
         if (allignment == 'x'):
             for i in range(length):
-                new_squares.append({'x':x+1, 'y':y})
+                new_squares.append({'x':x+i, 'y':y})
         elif (allignment == 'y'):
             for i in range(length):
-                new_squares.append({'x':x, 'y':y+1})
+                new_squares.append({'x':x, 'y':y+i})
         else:
             raise PlayerError("Allignment for ship placement needs to be either 'x' or 'y'")
 
