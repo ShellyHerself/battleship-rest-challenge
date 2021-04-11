@@ -11,35 +11,6 @@ def abortWithReason(error_code, text):
     '''Sends the user a given error code with the given message'''
     abort(error_code, message={"reason": text})
 
-game_move_parser = reqparse.RequestParser()
-game_move_parser.add_argument('player_id', required=True)
-game_move_parser.add_argument('move', required=True)
-
-class GameMove(Resource):
-    def post(self, game_id):
-        args = game_move_parser.parse_args()
-        try:
-            x = int(args['move']['x'])
-            y = int(args['move']['y'])
-        except Exception:
-            abortWithReason(
-                400, "Move field in request requires both an 'x' and a 'y' field as integers")
-        # Retrieve the game in the database
-        game = getDbGameOrAbort(game_id).toObject()
-        try:
-            # Create our game logic object
-            game_obj = game.toObject()
-            # Try to join our player into the game
-            hit = game_obj.makeMove(args['player_id'], x, y)
-            # serialize the data from our game object back to the database
-            game.fromObject(game_obj)
-            return {'hit': hit}, 200
-        except game_logic.PlayerError as e:
-            abortWithReason(400, e)
-
-        # This line should be unreachable. But just in case
-        abortWithReason(500, "Unreachable condition")
-
 def battleShipGameToListedGame(game):
     '''Converts a given game to the JSON specification in our API'''
     listed_game = {
@@ -77,6 +48,36 @@ def createDbGameOrAbort():
 
     return game
 
+game_move_parser = reqparse.RequestParser()
+game_move_parser.add_argument('player_id', required=True)
+game_move_parser.add_argument('move', required=True)
+
+class GameMove(Resource):
+    def post(self, game_id):
+        args = game_move_parser.parse_args()
+        try:
+            x = int(args['move']['x'])
+            y = int(args['move']['y'])
+        except Exception:
+            abortWithReason(
+                400, "Move field in request requires both an 'x' and a 'y' field as integers")
+        # Retrieve the game in the database
+        game = getDbGameOrAbort(game_id)
+        try:
+            # Create our game logic object
+            game_obj = game.toObject()
+            # Try to join our player into the game
+            hit = game_obj.makeMove(args['player_id'], x, y)
+            # serialize the data from our game object back to the database
+            game.fromObject(game_obj)
+            game.save()
+            return {'hit': hit}, 200
+        except game_logic.PlayerError as e:
+            abortWithReason(400, e)
+
+        # This line should be unreachable. But just in case
+        abortWithReason(500, "Unreachable condition")
+
 class Game(Resource):
     def get(self, game_id):
         '''Gets the current status of a game'''
@@ -95,6 +96,7 @@ class Game(Resource):
             game.fromObject(game_obj)
             game.save()
         except game_logic.PlayerError as e:
+            print(e)
             abortWithReason(400, e)
         return {
             'joined_game_id': game.id,
