@@ -66,3 +66,29 @@ libraries:
 - peewee: For sqlite database orm (Using playhouse extensions)
 - Pocha: For test framework
 - Hamcrest: For expressive matchers in tests.
+
+# Post-mortem
+I was able to test most of what I wanted to test in the api. And the game is nearly
+fully functional. I was able to test the game and database logic by proxy of
+testing the api. I do wish I had the chance to test the database and game logic
+more thoroughly. It would have given me a chance to fix the overlapping ships bug.
+
+I really shaved close to the time limit.
+
+I think if I did it again in the same amount of time I probably would cut some
+placement validation since user done placement wasn't a planned feature for this
+release anyway.
+
+I'm pretty happy with the result though. Seeing what I've gotten done in that
+little time. It's nearly a fully functional game of classic battleship.
+
+I definitely will take this as a lesson to expect every so slightly less though.
+That was too close for my taste.
+
+I would use the libraries being broken as an excuse for why it was so close
+but isn't that part of the job? :P
+
+Anyway, I'd like to hear your thoughts. Maybe we can go over this together some
+time. Review it together.
+
+- Michelle
