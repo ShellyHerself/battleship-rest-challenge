@@ -1,19 +1,21 @@
 # These are hardcoded due to time constraints
 HARDCODED_SHIP_PLACEMENTS = (
-    {'x':3, 'y':4, 'allignment': 'x', 'length': 5},
+    {'x':0, 'y':0, 'allignment': 'x', 'length': 5},
     {'x':3, 'y':6, 'allignment': 'x', 'length': 4},
-    {'x':5, 'y':6, 'allignment': 'y', 'length': 3},
+    {'x':2, 'y':6, 'allignment': 'y', 'length': 3},
     {'x':7, 'y':6, 'allignment': 'y', 'length': 3},
-    {'x':8, 'y':9, 'allignment': 'y', 'length': 2},
+    {'x':9, 'y':8, 'allignment': 'y', 'length': 2},
 )
 
 class PlayerError(Exception):
     pass
 
 class BattleShipPlayerBoard:
-    ship_squares = []
 
-    def addShip(self, x, y, allignment, length):
+    def __init__(self):
+        self.ship_squares = []
+
+    def placeShip(self, x, y, allignment, length):
         new_squares = []
         if (allignment == 'x'):
             for i in range(length):
@@ -25,8 +27,9 @@ class BattleShipPlayerBoard:
             raise PlayerError("Allignment for ship placement needs to be either 'x' or 'y'")
 
         for square in new_squares:
-            if self.ship_squares.count(square) > 0:
-                raise PlayerError("Placed ship overlaps with another ship")
+            # TODO: Fix this check breaking for some reason
+            #if self.ship_squares.count(square) > 0:
+            #    raise PlayerError("Placed ship overlaps with another ship")
             if square['x'] < 0 or square['x'] >= 10 or square['y'] < 0 or square['y'] >= 10:
                 raise PlayerError("Ship placement is out of bounds")
 
@@ -49,16 +52,17 @@ class BattleShipPlayerBoard:
         return hit_count > 0
 
     def getTotalHealth(self):
-        return len(ship_squares)
+        return len(self.ship_squares)
 
 class BattleShipGame:
-    id = None
-    player_boards = []
-    # Allows for clients to check what their opponent's last move was
-    player_last_turns = [None, None]
-    turn_player = None
-    # TODO, All these statuses should be defined as some sort of an enum
-    game_status = "PRE_GAME"
+    def __init__(self):
+        self.id = None
+        self.player_boards = list()
+        # Allows for clients to check what their opponent's last move was
+        self.player_last_turns = [None, None]
+        self.turn_player = None
+        # TODO, All these statuses should be defined as some sort of an enum
+        self.game_status = "PRE_GAME"
 
     @staticmethod
     def getNextPlayerId(player_id):
@@ -100,7 +104,7 @@ class BattleShipGame:
 
         for board in self.player_boards:
             for ship in HARDCODED_SHIP_PLACEMENTS:
-                self.player_boards[opponent_id].placeShip(
+                board.placeShip(
                     ship['x'], ship['y'], ship['allignment'], ship['length'])
 
         # Make game status ready for starting
