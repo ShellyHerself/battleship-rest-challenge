@@ -1,3 +1,4 @@
+import json
 from flask import Flask
 from flask_restful import reqparse, abort, Api, Resource
 
@@ -56,8 +57,9 @@ class GameMove(Resource):
     def post(self, game_id):
         args = game_move_parser.parse_args()
         try:
-            x = int(args['move']['x'])
-            y = int(args['move']['y'])
+            move = json.loads(args['move'])
+            x = move['x']
+            y = move['y']
         except Exception:
             abortWithReason(
                 400, "Move field in request requires both an 'x' and a 'y' field as integers")
@@ -67,7 +69,7 @@ class GameMove(Resource):
             # Create our game logic object
             game_obj = game.toObject()
             # Try to join our player into the game
-            hit = game_obj.makeMove(args['player_id'], x, y)
+            hit = game_obj.makeMove(int(args['player_id']), x, y)
             # serialize the data from our game object back to the database
             game.fromObject(game_obj)
             game.save()
