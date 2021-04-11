@@ -53,6 +53,8 @@ This is to reduce needless complexity in database relations.
 # API Endpoints
 These API Endpoints are derived from the the game logic classes I wrote:
 
+New Move names a field 'general_id', should be 'player_id'
+
 ![](battleship_api.png)
 
 # Technology plan
