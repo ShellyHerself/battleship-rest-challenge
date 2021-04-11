@@ -44,7 +44,7 @@ class DbBattleShipGame(BaseModel):
 
         return game
 
-    def fromObject(self, object):
+    def fromObject(self, game):
         '''Writes the data from a BattleShipGame to the given database entry'''
         json_boards = []
         for board in game.player_boards:

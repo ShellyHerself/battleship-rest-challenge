@@ -67,7 +67,8 @@ def getDbGameOrAbort(game_id):
 def createDbGameOrAbort():
     '''Creates a game'''
     try:
-        game = db.Game.create(status="PRE_GAME")
+        game = db.DbBattleShipGame.create(status="PRE_GAME")
+        game.save()
         if game is None:
             abortWithReason(500, "Couldn't create game")
     except Exception:
@@ -83,7 +84,7 @@ class Game(Resource):
 
     def post(self, game_id):
         # Retrieve the game in the database
-        game = getDbGameOrAbort(game_id).toObject()
+        game = getDbGameOrAbort(game_id)
         try:
             # Create our game logic object
             game_obj = game.toObject()
@@ -92,6 +93,7 @@ class Game(Resource):
             game_obj.startIfEnoughPlayers()
             # serialize the data from our game object back to the database
             game.fromObject(game_obj)
+            game.save()
         except game_logic.PlayerError as e:
             abortWithReason(400, e)
         return {
@@ -115,12 +117,13 @@ class GamesList(Resource):
         game = createDbGameOrAbort()
         try:
             # Create our game logic object
-            game_obj = game.toObject()
+            game_obj = game_logic.BattleShipGame()
             # Try to join our player into the game
             player_id = game_obj.joinPlayer()
             game_obj.startIfEnoughPlayers()
             # serialize the data from our game object back to the database
             game.fromObject(game_obj)
+            game.save()
         except game_logic.PlayerError as e:
             abortWithReason(400, e)
         return {
